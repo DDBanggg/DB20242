@@ -6,6 +6,9 @@ CREATE TABLE ChiTietDonHangBan (
     gia_ban_niem_yet_don_vi NUMERIC(12, 0) NOT NULL CHECK (gia_ban_niem_yet_don_vi >= 0),
     giam_gia NUMERIC(5,2)NOT NULL CHECK (giam_gia >= 0 AND giam_gia <= 1), -- Phần trăm giảm giá, ví dụ: 10% sẽ là 0.10
     gia_ban_cuoi_cung_don_vi NUMERIC(12, 0) NOT NULL CHECK (gia_ban_cuoi_cung_don_vi >= 0),
+    ngay_tao_ban_ghi TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    tong_gia_von NUMERIC(15, 0) NOT NULL DEFAULT 0 CHECK (tong_gia_von >= 0),
+    tong_gia_ban NUMERIC(15, 0) NOT NULL DEFAULT 0 CHECK (tong_gia_ban >= 0),
     ghi_chu TEXT NULL,
     CONSTRAINT fk_don_hang_ban_chitiet
         FOREIGN KEY(id_don_hang_ban)

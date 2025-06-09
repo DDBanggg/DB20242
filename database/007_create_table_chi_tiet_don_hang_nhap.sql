@@ -6,6 +6,7 @@ CREATE TABLE ChiTietDonHangNhap (
     so_luong_con_lai INTEGER NOT NULL CHECK (so_luong_con_lai >= 0),
     gia_nhap_don_vi NUMERIC(12, 0) NOT NULL CHECK (gia_nhap_don_vi >= 0),
     tong_gia_nhap NUMERIC(15, 0) NOT NULL CHECK (tong_gia_nhap >= 0),
+    ngay_tao_ban_ghi TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ghi_chu TEXT NULL,
     CONSTRAINT fk_don_hang_nhap
         FOREIGN KEY(id_don_hang_nhap)

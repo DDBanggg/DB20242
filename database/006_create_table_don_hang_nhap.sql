@@ -5,7 +5,6 @@ CREATE TABLE DonHangNhap (
     ngay_dat_hang DATE NOT NULL DEFAULT CURRENT_DATE,
     ngay_du_kien_nhan_hang DATE NULL,
     ngay_nhan_hang_thuc_te DATE NULL,
-    tong_gia_tri NUMERIC(15, 0) NOT NULL DEFAULT 0 CHECK (tong_gia_tri >= 0),
     trang_thai VARCHAR(50) NOT NULL DEFAULT 'Chờ xác nhận' CHECK (trang_thai IN ('Chờ xác nhận', 'Đã đặt hàng', 'Đang giao hàng', 'Hoàn tất', 'Đã hủy')),
     ghi_chu TEXT NULL,
     ngay_tao_ban_ghi TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,

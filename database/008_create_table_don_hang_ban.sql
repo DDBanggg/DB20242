@@ -28,7 +28,6 @@ CREATE TABLE DonHangBan (
     ngay_giao_hang_du_kien DATE NULL,
     ngay_giao_hang_thuc_te DATE NULL,
     dia_chi_giao_hang TEXT NOT NULL,
-    tong_doanh_thu NUMERIC(15, 0) NOT NULL DEFAULT 0 CHECK (tong_doanh_thu >= 0),
     phuong_thuc_thanh_toan enum_phuong_thuc_thanh_toan NOT NULL,
     trang_thai_don_hang enum_trang_thai_don_hang_ban NOT NULL DEFAULT 'Chờ xác nhận',
     trang_thai_thanh_toan enum_trang_thai_thanh_toan NOT NULL DEFAULT 'Chưa thanh toán',
