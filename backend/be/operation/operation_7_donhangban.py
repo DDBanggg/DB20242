@@ -65,7 +65,7 @@ def add_item_to_donhangban(id_don_hang_ban, id_san_pham, so_luong,
                            gia_ban_niem_yet_don_vi, giam_gia,
                            ghi_chu_item=None):
     """
-    Thêm một sản phẩm vào ChiTietDonHangBan một cách an toàn (atomic).
+    Thêm một sản phẩm vào ChiTietDonHangBan.
     """
     if not (0 <= giam_gia <= 1):
         print(f"Lỗi: Tỷ lệ giảm giá '{giam_gia}' không hợp lệ. Phải từ 0.0 đến 1.0.", file=sys.stderr)
@@ -117,7 +117,7 @@ def add_item_to_donhangban(id_don_hang_ban, id_san_pham, so_luong,
 
 def get_all_donhangban(customer_id: int = None, staff_id: int = None, status: str = None):
     """
-    (Hàm mới) Lấy danh sách Đơn Hàng Bán, có thể lọc.
+    Lấy danh sách Đơn Hàng Bán, có thể lọc.
     """
     conn = get_db_connection()
     if not conn: return None

@@ -83,7 +83,7 @@ def add_item_to_donhangnhap(id_don_hang_nhap, id_san_pham, so_luong, gia_nhap_do
 
 def get_all_donhangnhap(supplier_id: int = None, status: str = None):
     """
-    (Hàm mới) Lấy danh sách Đơn Hàng Nhập, có thể lọc.
+    Lấy danh sách Đơn Hàng Nhập, có thể lọc.
     """
     conn = get_db_connection()
     if not conn: return None

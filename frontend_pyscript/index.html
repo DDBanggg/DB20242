@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Bán Hàng</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
+
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Một vài tùy chỉnh nhỏ */
+        body {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            height: 100vh;
+        }
+        aside { padding: 20px; border-right: 1px solid var(--pico-muted-border-color); }
+        main { padding: 20px; overflow-y: auto; }
+        nav a { display: block; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <aside>
+        <nav>
+            <h3>Quản Lý</h3>
+            <a href="#" id="nav-danhmuc">► Quản lý Danh mục</a>
+            <a href="#" id="nav-sanpham">► Quản lý Sản phẩm</a>
+
+            <h3>Báo cáo</h3>
+            <a href="#" id="nav-report-thongke">► Thống kê Bán hàng</a>
+        </nav>
+    </aside>
+
+    <main id="main-content">
+        </main>
+
+    <py-config>
+        packages = ["requests"]
+        [[fetch]]
+        files = ["./frontend/main.py"]
+    </py-config>
+    <py-script src="./frontend/main.py"></py-script>
+
+</body>
+</html>

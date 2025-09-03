@@ -1,10 +1,5 @@
 # be/operation/operation_9_lichsugianiemyet.py
 
-"""
-Module này chứa các hàm nghiệp vụ để quản lý lịch sử giá niêm yết
-của sản phẩm trong bảng LichSuGiaNiemYet.
-"""
-
 import psycopg2
 import psycopg2.extras
 from datetime import date
@@ -104,7 +99,7 @@ def get_lichsugianiemyet_by_id(history_id: int):
 
 def update_lichsugianiemyet(history_id: int, **kwargs):
     """
-    (Hàm mới) Cập nhật một bản ghi lịch sử giá.
+    Cập nhật một bản ghi lịch sử giá.
     Chỉ cho phép cập nhật giá và ghi chú để không ảnh hưởng logic trigger.
     """
     conn = get_db_connection()

@@ -99,7 +99,7 @@ def get_chiphi(loai_filter: str = None, date_from_str: str = None, date_to_str: 
 
 def get_chiphi_by_id(chiphi_id: int):
     """
-    (Hàm mới) Lấy thông tin một khoản chi phí theo ID.
+    Lấy thông tin một khoản chi phí theo ID.
     """
     conn = get_db_connection()
     if not conn:
@@ -170,7 +170,7 @@ def update_chiphi(chiphi_id: int, **kwargs):
 
 def delete_chiphi(chiphi_id: int):
     """
-    (Hàm mới) Xóa một khoản chi phí khỏi cơ sở dữ liệu.
+    Xóa một khoản chi phí khỏi cơ sở dữ liệu.
     """
     conn = get_db_connection()
     if not conn:

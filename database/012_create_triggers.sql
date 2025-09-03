@@ -110,7 +110,7 @@ EXECUTE FUNCTION func_khoi_tao_chitiet_nhap();
 
 -- 3.1. Hàm cập nhật tồn kho khi đơn hàng bán hoàn tất
 -- Mục đích: Giảm số lượng tồn kho của sản phẩm khi đơn bán được giao thành công.
-CREATE OR REPLACE FUNCTION func_cap_nhat_ton_kho_khi_ban_hang()x
+CREATE OR REPLACE FUNCTION func_cap_nhat_ton_kho_khi_ban_hang()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.trang_thai_don_hang = 'Hoàn tất' AND OLD.trang_thai_don_hang IS DISTINCT FROM NEW.trang_thai_don_hang THEN

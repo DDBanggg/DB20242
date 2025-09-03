@@ -1,9 +1,5 @@
 # be/reports/operation_13_congno.py
 
-"""
-Module này chứa hàm để tạo báo cáo công nợ phải thu từ khách hàng.
-"""
-
 import psycopg2
 import psycopg2.extras
 from datetime import date

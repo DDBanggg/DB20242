@@ -1,10 +1,5 @@
 # be/reports/operation_12_phantichkhachhang.py
 
-"""
-Module này chứa các hàm để tạo báo cáo phân tích khách hàng,
-bao gồm tỷ lệ khách hàng mới/quay lại và danh sách khách hàng chi tiêu nhiều nhất.
-"""
-
 import psycopg2
 import psycopg2.extras
 from datetime import date, timedelta

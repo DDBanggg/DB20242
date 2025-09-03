@@ -1,10 +1,5 @@
 # be/reports/operation_10_doanhthuloinhuan.py
 
-"""
-Module này chứa các hàm để tạo báo cáo tài chính,
-bao gồm doanh thu và lợi nhuận theo các kỳ báo cáo khác nhau.
-"""
-
 import psycopg2
 import psycopg2.extras
 from datetime import date, timedelta

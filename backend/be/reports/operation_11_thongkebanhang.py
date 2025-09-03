@@ -1,10 +1,5 @@
 # be/reports/operation_11_thongkebanhang.py
 
-"""
-Module này chứa các hàm để tạo báo cáo thống kê bán hàng,
-bao gồm số lượng đơn hàng, sản phẩm bán chạy và tình hình tồn kho.
-"""
-
 import psycopg2
 import psycopg2.extras
 from datetime import date, timedelta

@@ -80,7 +80,7 @@ def get_nhanvien_by_id(nhanvien_id: int):
 
 def update_nhanvien(nhanvien_id: int, **kwargs):
     """
-    Cập nhật thông tin một nhân viên một cách linh hoạt.
+    Cập nhật thông tin một nhân viên.
     """
     conn = get_db_connection()
     if not conn:

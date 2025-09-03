@@ -16,7 +16,7 @@ def add_danhmuc(ma_danh_muc, ten_danh_muc, mo_ta=None):
         return None
 
     new_id = None
-    # ngay_tao có DEFAULT trong DB, nên không cần insert
+    # ngay_tao có DEFAULT trong DB
     sql = """
         INSERT INTO DanhMuc (ma_danh_muc, ten_danh_muc, mo_ta)
         VALUES (%s, %s, %s) RETURNING id;
@@ -56,8 +56,7 @@ def get_all_danhmuc():
 
 def get_danhmuc_by_id(danhmuc_id: int):
     """
-    (Hàm mới) Lấy thông tin một danh mục theo ID.
-    Rất hữu ích để API trả về đối tượng vừa được tạo/cập nhật.
+    Lấy thông tin một danh mục theo ID.
     """
     conn = get_db_connection()
     if not conn:
