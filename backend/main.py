@@ -21,10 +21,11 @@ origins = [
     "*" # Cho phép tất cả (Dùng cho MVP demo cho tiện)
 ]
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"], # Hoặc ["http://localhost:5173"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
