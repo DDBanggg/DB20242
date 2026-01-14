@@ -1,50 +1,115 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Quản Lý Bán Hàng</title>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
-
+    <title>OmniPocket POS</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
-        /* Một vài tùy chỉnh nhỏ */
-        body {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            height: 100vh;
+        body { background-color: #f4f6f9; height: 100vh; overflow: hidden; }
+        .product-card { cursor: pointer; transition: 0.2s; border: 1px solid #e0e0e0; }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-color: #0d6efd; }
+        .product-img { height: 120px; object-fit: contain; padding: 10px; background: #fff; }
+        .cart-section { height: 100vh; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 10px; }
+        .total-section { padding: 20px; background: #f8f9fa; border-top: 2px solid #ddd; }
+        .warning-stock { color: #dc3545; font-size: 0.8rem; font-weight: bold; }
+        
+        /* CSS cho Hóa đơn (Chỉ hiện khi in) */
+        #invoice-area { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #invoice-area, #invoice-area * { visibility: visible; }
+            #invoice-area { position: absolute; left: 0; top: 0; width: 100%; display: block; }
         }
-        aside { padding: 20px; border-right: 1px solid var(--pico-muted-border-color); }
-        main { padding: 20px; overflow-y: auto; }
-        nav a { display: block; margin-bottom: 1rem; }
     </style>
 </head>
 <body>
-    <aside>
-        <nav>
-            <h3>Quản Lý</h3>
-            <a href="#" id="nav-danhmuc">► Quản lý Danh mục</a>
-            <a href="#" id="nav-sanpham">► Quản lý Sản phẩm</a>
 
-            <h3>Báo cáo</h3>
-            <a href="#" id="nav-report-thongke">► Thống kê Bán hàng</a>
-        </nav>
-    </aside>
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <div class="col-md-8 col-lg-9 p-3 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold text-primary"><i class="fas fa-store"></i> OmniPocket POS</h4>
+                <div class="input-group w-50">
+                    <input type="text" id="search-input" class="form-control" placeholder="Tìm tên hoặc mã SP...">
+                    <button id="btn-search" class="btn btn-primary" py-click="search_product()"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
 
-    <main id="main-content">
-        </main>
+            <div id="product-list" class="row g-3" style="overflow-y: auto;">
+                <div class="text-center mt-5"><div class="spinner-border text-primary"></div><p>Đang tải dữ liệu...</p></div>
+            </div>
+        </div>
 
-    <py-config>
-        packages = ["requests"]
-        [[fetch]]
-        files = ["./frontend/main.py"]
-    </py-config>
-    <py-script src="./frontend/main.py"></py-script>
+        <div class="col-md-4 col-lg-3 cart-section shadow">
+            <div class="p-3 bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="m-0"><i class="fas fa-shopping-cart"></i> Giỏ Hàng</h5>
+                <span id="cart-count" class="badge bg-white text-primary rounded-pill">0</span>
+            </div>
+
+            <div id="cart-items" class="cart-items">
+                <div class="text-center text-muted mt-5">Chưa có sản phẩm nào</div>
+            </div>
+
+            <div class="total-section">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Tạm tính:</span>
+                    <span id="sub-total" class="fw-bold">0 ₫</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 text-success">
+                    <span>Thuế VAT (10%):</span>
+                    <span id="tax-total">0 ₫</span>
+                </div>
+                <div class="d-flex justify-content-between mb-4 fs-4 fw-bold text-primary">
+                    <span>TỔNG:</span>
+                    <span id="final-total">0 ₫</span>
+                </div>
+                <button id="btn-checkout" class="btn btn-success w-100 py-3 fw-bold text-uppercase" py-click="process_checkout()">
+                    <i class="fas fa-money-bill-wave"></i> Thanh Toán Ngay
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="invoice-area" class="p-4">
+    <div class="text-center mb-4">
+        <h2>CỬA HÀNG OMNIPOCKET</h2>
+        <p>ĐC: 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội</p>
+        <p>Hotline: 0987654321</p>
+        <hr>
+        <h3>HÓA ĐƠN BÁN LẺ</h3>
+        <p>Mã đơn: <span id="inv-id">---</span> | Ngày: <span id="inv-date">---</span></p>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr><th>Tên SP</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr>
+        </thead>
+        <tbody id="inv-items"></tbody>
+    </table>
+    <div class="text-end">
+        <p>Cộng tiền hàng: <span id="inv-subtotal">0</span></p>
+        <p>Thuế VAT (10%): <span id="inv-tax">0</span></p>
+        <h4 class="fw-bold">TỔNG CỘNG: <span id="inv-total">0</span></h4>
+    </div>
+    <hr>
+    <div class="text-center fst-italic">Cảm ơn quý khách và hẹn gặp lại!</div>
+</div>
+
+<py-config>
+    packages = ["requests"]
+    [[fetch]]
+    from = "frontend/"
+    files = ["main.py"]
+</py-config>
+
+<py-script src="frontend/main.py"></py-script>
 
 </body>
 </html>

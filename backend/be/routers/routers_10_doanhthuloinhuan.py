@@ -1,82 +1,51 @@
-# be/routers/routers_10_doanhthuloinhuan.py
+from fastapi import APIRouter, HTTPException
+from ..db_connection import execute_query
 
-from fastapi import APIRouter, HTTPException, status, Query
-from pydantic import BaseModel, Field
-from typing import List, Optional
-from datetime import date
-from decimal import Decimal
-from enum import Enum
+router = APIRouter()
 
-# Import các hàm nghiệp vụ
-from be.reports import operation_10_doanhthuloinhuan as report_ops
-
-# Khởi tạo router mới
-router = APIRouter(
-    prefix="/reports",
-    tags=["Báo cáo"],
-)
-
-
-# --- Định nghĩa các giá trị Enum để validation ---
-class ReportPeriod(str, Enum):
-    yesterday = "yesterday"
-    last_week = "last_week"
-    last_month = "last_month"
-    custom = "custom"
-
-
-# --- Pydantic Models ---
-class FinancialReportDetail(BaseModel):
-    ky_bao_cao: date
-    tong_doanh_thu: Decimal
-    loi_nhuan: Decimal
-
-
-class FinancialReportSummary(BaseModel):
-    ky_bao_cao: str
-    tong_doanh_thu: Decimal
-    loi_nhuan: Decimal
-
-
-class FinancialReportOut(BaseModel):
-    summary: FinancialReportSummary
-    details: List[FinancialReportDetail]
-
-
-# --- API Endpoint ---
-
-@router.get("/financial", response_model=FinancialReportOut, summary="Lấy báo cáo doanh thu và lợi nhuận")
-def get_financial_report(
-        period: ReportPeriod = Query(..., description="Kỳ báo cáo: 'yesterday', 'last_week', 'last_month', 'custom'"),
-        start_date: Optional[date] = Query(None, description="Ngày bắt đầu cho kỳ 'custom' (YYYY-MM-DD)"),
-        end_date: Optional[date] = Query(None, description="Ngày kết thúc cho kỳ 'custom' (YYYY-MM-DD)")
-):
+@router.get("/bao-cao/hom-nay")
+async def get_bao_cao_nhanh_hom_nay():
     """
-    Tạo báo cáo tài chính tổng hợp về doanh thu và lợi nhuận.
-    - **period**: Chọn một kỳ báo cáo được định sẵn.
-    - **start_date / end_date**: Bắt buộc nếu `period` là `custom`.
+    Báo cáo nhanh Doanh thu & Lợi nhuận trong ngày (Hôm nay).
+    Logic:
+    - Lọc đơn hàng có ngày tạo = Hôm nay (CURRENT_DATE).
+    - Trạng thái = 'Hoàn tất'.
+    - Doanh thu = SUM(ChiTiet.tong_gia_ban).
+    - Lợi nhuận gộp = Doanh thu - SUM(ChiTiet.tong_gia_von).
     """
-    start_date_str = start_date.isoformat() if start_date else None
-    end_date_str = end_date.isoformat() if end_date else None
+    try:
+        # Query tính toán trực tiếp từ DB để đảm bảo tốc độ
+        sql = """
+            SELECT
+                COUNT(DISTINCT dh.id) as so_don_hang,
+                COALESCE(SUM(ct.tong_gia_ban), 0) as doanh_thu,
+                COALESCE(SUM(ct.tong_gia_von), 0) as tong_gia_von
+            FROM DonHangBan dh
+            JOIN ChiTietDonHangBan ct ON dh.id = ct.id_don_hang_ban
+            WHERE DATE(dh.ngay_dat_hang) = CURRENT_DATE
+              AND dh.trang_thai_don_hang = 'Hoàn tất'
+        """
 
-    report = report_ops.get_financial_report(
-        period=period.value,
-        start_date_str=start_date_str,
-        end_date_str=end_date_str
-    )
+        result = execute_query(sql)
+        data = result[0] if result else {}
 
-    if report is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Không thể tạo báo cáo. Vui lòng kiểm tra lại các tham số."
-        )
+        # Xử lý số liệu
+        doanh_thu = float(data.get('doanh_thu', 0))
+        gia_von = float(data.get('tong_gia_von', 0))
+        loi_nhuan = doanh_thu - gia_von
+        so_don = data.get('so_don_hang', 0)
 
-    # Đảm bảo summary không rỗng
-    if not report.get("summary"):
-        report["summary"] = {
-            "ky_bao_cao": "Không có dữ liệu",
-            "tong_doanh_thu": 0,
-            "loi_nhuan": 0
+        return {
+            "status": "success",
+            "date": "Hôm nay",
+            "data": {
+                "so_don_hang": so_don,
+                "doanh_thu": doanh_thu,
+                "loi_nhuan": loi_nhuan,
+                "ty_suat_loi_nhuan": round((loi_nhuan/doanh_thu * 100), 1) if doanh_thu > 0 else 0
+            }
         }
 
-    return report
+    except Exception as e:
+        print(f"Lỗi báo cáo: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
